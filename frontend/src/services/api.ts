@@ -24,7 +24,9 @@ export const dateTime = (s?: string | null) => s ? new Date(s).toLocaleString([]
 export const day = (s: string) => new Date(s).toLocaleDateString([], {month:'short',day:'numeric'});
 
 export type ReferencePassage = {chunk_id:string; heading:string; text:string; rank:number; citation:{source_id:string; title:string; url:string; publisher:string; category:string; system:string; source_updated:string|null; reviewed_on:string; version:string; text_sha256:string; attribution:string; scope:string}};
+export type AnswerPart = {id:string;text:string;basis:string;citation_ids:string[];fact_ids:string[]};
 export type AssistantAnswer = {
+ short_answer_parts?:{kind:'education'|'assessment';explanation:AnswerPart;recommendation:AnswerPart|null}|null;
  id?:string; conversation_id?:string; parent_id?:string|null; intent?:string; generation_status?:string; short_answer_block_ids?:string[]; schema_version:string; question:string; short_answer:string; mode:string; coverage:string; origin:string; created_at:string;
  safety:{immediate_guidance?:{code:string;text:string;citation_ids:string[]}[]; protocol_status?:string; approved_procedures?:{id:string;title:string;version:string;steps:unknown[];references:unknown[]}[]; communication?:{online:boolean;delay_seconds:number;simulation:boolean}; support?:{medical_personnel_available?:boolean|null}; urgent:boolean; matched_warning_signs:string[]; warning:string; scope:string; actions:{code:string;text:string}[]};
  detailed:{patient_observations:{id:string;metric:string;value:number;unit:string;collected_at:string;origin:string;source:string;quality:string;stale:boolean;baseline:number|null;change_percent:number|null}[];

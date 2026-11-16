@@ -14,3 +14,5 @@
 .legacy-monitoring-tools{border:1px solid var(--line);border-radius:8px;padding:17px;margin-top:24px}.legacy-monitoring-tools>summary{cursor:pointer;color:#adc095;font-size:12px}.legacy-monitoring-tools[open]>summary{margin-bottom:20px}.assistant-answer-basis{margin-top:9px}.assistant-answer-basis>.source-links{margin-top:5px}.assistant-reasoning>p{font-size:13px;line-height:1.9;margin-top:9px}
 
 .emergency-overlay{display:block;margin:16px 0;line-height:1.6}.emergency-overlay h3{margin-bottom:10px}.emergency-overlay p{margin:8px 0}.emergency-overlay pre{white-space:pre-wrap;overflow-wrap:anywhere}.assistant-question-options{flex-wrap:wrap}
+
+.research-controls{margin:20px 0}.research-provenance{margin-top:20px}.research-provenance h3{margin-top:20px}.research-provenance details{margin-top:16px;overflow-wrap:anywhere}

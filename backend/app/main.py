@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from .database.db import Base, engine, SessionLocal
 from .models import records  # register tables
 from .models import knowledge
+from .models import research
 from .config import SEED_DEMO
 from .services.seed import seed
 from .api.core import router as core_router
@@ -47,6 +48,8 @@ from .api.knowledge import router as knowledge_router
 app.include_router(knowledge_router)
 from .api.assistant import router as assistant_router
 app.include_router(assistant_router)
+from .api.research import router as research_router
+app.include_router(research_router)
 
 # The built dashboard can be served onboard by the same process as the API.
 # Vite remains the development server; production assets require npm run build.

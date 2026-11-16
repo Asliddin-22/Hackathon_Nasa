@@ -23,9 +23,12 @@ def plan(intent='general_education',**changes):
             'include_mission':False,'use_conversation_history':False,'retrieval_queries':[],'symptom_scope':'educational',**changes}
 
 
-def generated(text='A generated explanation of the requested mechanism.',**changes):
-    return {'blocks':[{'id':'b1','text':text,'basis':'general_model_knowledge','citation_ids':[],'fact_ids':[]}],
-            'short_answer_ids':['b1'],'possible_explanations':[],'follow_up_questions':[],'recommendations':[],
+def generated(text='A generated explanation of the requested mechanism.',personal=False,**changes):
+    personal=personal or changes.get('needs_medical_review') or changes.get('needs_urgent_attention')
+    blocks=[{'id':'b1','text':text,'basis':'general_model_knowledge','citation_ids':[],'fact_ids':[]}]
+    if personal:blocks.append({'id':'next','text':'Record when the reported change occurs and which associated changes need assessment.','basis':'general_model_knowledge','citation_ids':[],'fact_ids':[]})
+    return {'blocks':blocks,
+            'short_answer':{'explanation_id':'b1','recommendation_id':'next' if personal else None},'possible_explanations':[],'follow_up_questions':[],'recommendations':[],
             'uncertainties':['General model knowledge; not independently verified against a retrieved source.'],
             'needs_medical_review':False,'needs_urgent_attention':False,**changes}
 
@@ -34,7 +37,7 @@ def mock_model(monkeypatch,routing=None,answer=None,audit=None):
     calls=[]
     def respond(name,instructions,data,schema,**kwargs):
         calls.append((name,copy.deepcopy(data),schema))
-        result={'medical_context_plan':routing or plan(),'medical_conversation_answer':answer or generated(),
+        result={'medical_context_plan':routing or plan(),'medical_conversation_answer':answer or generated(personal=(routing or {}).get('intent')=='personal_assessment'),
                 'medical_answer_audit':audit or {'acceptable':True,'issues':[]}}[name]
         return result(data) if callable(result) else copy.deepcopy(result)
     monkeypatch.setattr(conversation,'llm_enabled',lambda:True)
@@ -74,7 +77,7 @@ def test_unseen_education_generates_without_rag_or_patient_access(client,corpus,
 def test_source_grounded_generated_mechanism_uses_verified_ids(client,corpus,astronaut,monkeypatch):
     def body(data):
         ref=data['references'][0]
-        return generated('A clear generated explanation linking arterial pressure and blood flow.',blocks=[{'id':'concept','text':'A clear generated explanation linking arterial pressure and blood flow.','basis':'retrieved_evidence','citation_ids':[ref['chunk_id']],'fact_ids':[]}],short_answer_ids=['concept'],uncertainties=[])
+        return generated('A clear generated explanation linking arterial pressure and blood flow.',blocks=[{'id':'concept','text':'A clear generated explanation linking arterial pressure and blood flow.','basis':'retrieved_evidence','citation_ids':[ref['chunk_id']],'fact_ids':[]}],short_answer={'explanation_id':'concept','recommendation_id':None},uncertainties=[])
     calls=mock_model(monkeypatch,plan(retrieval_queries=['blood pressure systolic diastolic']),body)
     result=client.post('/api/assistant/messages',headers=astronaut,json={'question':'Explain arterial pressure in terms of heart contraction.'}).json()
     assert result['mode']=='muse_wonder_generated' and result['detailed']['references']
@@ -150,7 +153,8 @@ def test_explicit_urgent_guidance_works_with_model_disabled_and_missing_index(cl
     forbidden=Mock(side_effect=AssertionError('Disabled provider must not be called for local emergency support'))
     monkeypatch.setattr(meta_model,'request_structured',forbidden)
     result=client.post('/api/assistant/messages',headers=astronaut,json={'question':'I need help now','warning_signs':True}).json()
-    assert result['safety']['urgent'] and 'Do not wait for Earth' in result['short_answer']
+    assert result['safety']['urgent'] and result['safety']['actions']
+    assert 'Conversational generation is unavailable' in client.get('/api/assistant/messages/'+result['id'],headers=astronaut).json()['short_answer']
     forbidden.assert_not_called()
 
 
@@ -179,7 +183,7 @@ def test_offline_fallback_does_not_impersonate_generated_reasoning(client,corpus
 @pytest.mark.parametrize('change',[
     lambda x:x['blocks'][0].update(citation_ids=['invented'],basis='retrieved_evidence'),
     lambda x:x['blocks'][0].update(fact_ids=['invented_patient_fact']),
-    lambda x:x.update(short_answer_ids=['nonexistent_block']),
+    lambda x:x.update(short_answer={'explanation_id':'nonexistent_block','recommendation_id':None}),
 ])
 def test_structural_provenance_rejects_unknown_evidence_not_wording(client,corpus,astronaut,monkeypatch,change):
     body=generated();change(body)

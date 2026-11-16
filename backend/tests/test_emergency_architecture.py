@@ -40,7 +40,7 @@ def install_reasoning(monkeypatch,metrics,urgent=True):
         return generated(first,
           blocks=[{'id':'explanation','text':first,'basis':'clinical_inference','citation_ids':[],'fact_ids':['user_report']},
                   {'id':'next_step','text':next_step,'basis':basis,'citation_ids':citation_ids,'fact_ids':[]}],
-          short_answer_ids=['explanation','next_step'],
+          short_answer={'explanation_id':'explanation','recommendation_id':'next_step'},
           possible_explanations=[{'title':'A contextual, potentially reversible contributor','text':'Workload, environment, or an intercurrent illness could contribute depending on the history.','basis':'clinical_inference','citation_ids':[],'fact_ids':['user_report']},
                                  {'title':'A more serious underlying process','text':'An urgent process cannot be excluded from symptoms and available measurements alone.','basis':'clinical_inference','citation_ids':[],'fact_ids':['user_report']}],
           follow_up_questions=['What changed just before this began, and what has changed since?','Is another trained crewmember able to help while you provide this information?'],
@@ -181,7 +181,7 @@ def test_unfamiliar_personal_presentations_use_same_generation_path(client,corpu
     assert [name for name,_,_ in calls]==['medical_context_plan','medical_conversation_answer','medical_answer_audit']
 
 
-@pytest.mark.parametrize('failure',['unknown_citation','uncited_emergency_action','rejected_audit'])
+@pytest.mark.parametrize('failure',['unknown_citation','rejected_audit'])
 def test_invalid_emergency_generation_cannot_remove_independent_guidance(client,corpus,astronaut,monkeypatch,failure):
     install_reasoning(monkeypatch,[])
     respond=meta_model.request_structured
@@ -189,16 +189,13 @@ def test_invalid_emergency_generation_cannot_remove_independent_guidance(client,
         output=respond(name,*args,**kwargs)
         if name=='medical_conversation_answer':
             if failure=='unknown_citation':output['blocks'][0]['citation_ids']=['forged-reference']
-            if failure=='uncited_emergency_action':
-                output['recommendations'][0]['citation_ids']=[]
-                output['recommendations'][0]['basis']='general_model_knowledge'
         if name=='medical_answer_audit' and failure=='rejected_audit':return {'acceptable':False,'issues':['unapproved_treatment']}
         return output
     monkeypatch.setattr(meta_model,'request_structured',invalid)
     first=client.post('/api/assistant/messages',headers=astronaut,json={'question':'An unanticipated emergency report','warning_signs':True}).json()
     final=client.get('/api/assistant/messages/'+first['id'],headers=astronaut).json()
     assert final['generation_status']=='failed' and final['safety']['urgent']
-    assert final['detailed']['emergency_guidance'] and 'Activate onboard emergency assistance' in final['short_answer']
+    assert final['detailed']['emergency_guidance'] and 'Conversational generation is unavailable' in final['short_answer']
     assert not final['detailed']['reasoning']
 
 

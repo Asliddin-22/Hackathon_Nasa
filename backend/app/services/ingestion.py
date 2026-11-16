@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from ..models.records import Measurement, AuditEvent
 
 METRICS = {
+    'heart_rate': ('bpm', 20, 250),
     'resting_hr': ('bpm', 20, 250), 'hrv': ('ms', 1, 500),
     'systolic_bp': ('mmHg', 40, 280), 'diastolic_bp': ('mmHg', 20, 180),
     'strength': ('kg', 0, 400), 'balance_sway': ('deg', 0, 180),

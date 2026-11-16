@@ -69,12 +69,18 @@ def preflight(db,question,severity=None,warning_signs=False,parent_response=None
             'actions':[],'scope':'Potential text matches need context; explicit reported danger escalates independently.'}
 
 
+def model_context(safety):
+    """Supply incident facts without feeding displayed warning prose back to the LLM."""
+    if not safety or not safety.get('urgent'):return {'urgent':False}
+    return {key:safety.get(key) for key in ('urgent','matched_warning_signs','communication',
+                                           'support','approved_procedures','protocol_status')} | {'local_notice_already_displayed':True}
+
+
 def attach(result,safety):
     """A monotonic safety overlay never overwrites validated generated reasoning."""
     if not safety or not safety.get('urgent'):return result
     result['safety']=safety
     result['needs_medical_review']=True
-    result['intent']='urgent'
     local_refs=support_references()
     existing={r['chunk_id'] for r in result['detailed']['references']}
     result['detailed']['references'] += [r for r in local_refs if r['chunk_id'] not in existing]
@@ -82,7 +88,6 @@ def attach(result,safety):
     # and generated responses; model-generated recommendations remain separate.
     result['detailed']['emergency_guidance']=safety.get('immediate_guidance',[])
     result['detailed']['approved_procedures']=safety.get('approved_procedures',[])
-    if not result.get('short_answer') or result.get('mode') in ('generation_unavailable','pending_generation'):
-        result['short_answer']=' '.join(a['text'] for a in safety['actions'])
-        result['short_answer']+=' '+ ' '.join(g['text'] for g in safety.get('immediate_guidance',[])[:2])
+    # Pending/failure status stays operational. Guidance is displayed once in
+    # its own safety panel and never masquerades as a medical short answer.
     return result

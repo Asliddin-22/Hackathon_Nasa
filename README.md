@@ -2,7 +2,7 @@
 
 A working local astronaut-health monitoring demonstration for the NASA Space Apps hackathon. React/TypeScript + FastAPI + SQLAlchemy/SQLite. The core workflow runs without an LLM or internet access after dependencies are installed.
 
-All seeded telemetry, crew identities, and exam records are synthetic. This prototype is not an approved medical system. Its experimental trend flags do not establish diagnoses, predict outcomes, or recommend treatments.
+All seeded astronaut telemetry, crew identities, and exam records are synthetic. A separate **Real Research Data Replay** mode uses explicitly labeled Earth-based clinical measurements. This prototype is not an approved medical system. Its experimental trend flags do not establish diagnoses, predict outcomes, or recommend treatments.
 
 ## Run locally
 
@@ -58,11 +58,19 @@ This script adds a synthetic symptom/review, verifies each delivery boundary, si
 - Connected astronaut and doctor interfaces, history filters, manual ingestion, CSV export, evidence details, mission controls, simulator controls, and responsive navigation.
 - A built dashboard served directly from FastAPI, including local font assets.
 
+## Real Research Data Replay
+
+Sign in as Astronaut and choose **Real Research Data Replay** in the sidebar. It replays **481 real heart-rate readings across eight minutes** from [PhysioNet BIDMC record 01](https://physionet.org/content/bidmc/1.0.0/), with original bpm values and elapsed seconds preserved. Use one-sample-per-second playback, advance 30 samples, or load the full record; restart playback without duplicating stored measurements. The chart, downloadable original CSV, citations, license, and checksum are available offline.
+
+These are **Earth ICU measurements, not astronaut or established resting-heart-rate data**. Research data use a separate subject and cannot mix with astronaut records, baselines, AI context, or Earth downlinks. Eight minutes cannot satisfy the existing multi-day monitoring rules; the view reports insufficient longitudinal data and shows descriptive statistics instead. No clinical validation or future prediction is claimed. [Exact provenance, timestamp adapter, and real-versus-simulated inventory](research_data/README.md).
+
+Restart the backend to create additive replay tables. The original simulator, AI, and communication workflow remain available.
+
 ## Conversational space medical assistant
 
 Muse Wonder now generates the medical explanation rather than selecting predefined answers. It supports general medical education, space-medicine questions, personal assessments, and threaded follow-ups. It dynamically plans relevant patient data and source retrieval; educational questions do not load the clinical profile or automatically create review alerts. Empty local RAG coverage does not prevent an ordinary educational answer.
 
-The short answer reuses the same generated blocks shown in **Detailed analysis**. Source-supported statements link to verified local citation IDs; general model knowledge is explicitly labeled as not independently source-verified. Structural validation and an automated evidence/policy audit check the output without enforcing a wording template or disease list. For personal questions, the model can propose a few uncertain explanations and targeted follow-ups; patient facts remain read-only.
+Personal short answers now show **Possible problem** and **Recommendation**, using the same generated blocks shown in **Detailed analysis**. A single independent emergency notice stays separate, with expandable support details. Incomplete or repetitive model answers receive one bounded quality revision; failed generation is labeled unavailable instead of replaced by warning text. Educational follow-ups retain their conceptual intent even during an unresolved incident. See the [short-answer investigation and changes](docs/short-answer-redesign.md). Source-supported statements link to verified local citation IDs; general model knowledge is explicitly labeled as not independently source-verified. Structural validation and an automated evidence/policy audit check the output without enforcing a wording template or disease list. For personal questions, the model can propose a few uncertain explanations and targeted follow-ups; patient facts remain read-only.
 
 The local corpus remains **15 reviewed NIH/NLM/NASA documents / 34 passages**. [Source inventory and permissions](medical_knowledge/README.md). No model training or external embeddings API is used.
 
@@ -96,7 +104,7 @@ PLAYWRIGHT_BROWSER=chromium npm run test:e2e
 
 Browser tests start isolated API/Vite servers on ports 8002/8003/5174 with a new temporary SQLite database per run. Build first: one test exercises FastAPI's built dashboard directly. Tests do not reset or modify the normal demo database. API tests use isolated in-memory or temporary databases. Browser screenshots/traces on failure live under ignored `frontend/test-results/`; successful test screenshots are also kept in that directory.
 
-Verified in this implementation: **131 backend tests, 7 Chrome browser workflows, and the production TypeScript/Vite build**. Model calls are mocked for development; tests establish integration behavior, not medical accuracy. See [verification details](docs/verification.md).
+Verified in this implementation: **163 backend tests, 8 Chrome browser workflows, and the production TypeScript/Vite build**. Model calls are mocked for development; tests establish integration behavior, not medical accuracy. See [verification details](docs/verification.md).
 
 ## Legacy trend-explanation connection check
 

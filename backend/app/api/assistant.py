@@ -32,7 +32,7 @@ def conversation_history(db,user_id,thread_id,parent_id):
         turn=db.get(AssistantTurn,cursor);message=db.get(AssistantMessage,cursor)
         if not turn or turn.thread_id!=thread_id or not message or message.user_id!=user_id:raise HTTPException(404,'Conversation parent not found')
         job=db.get(AssistantJob,cursor)
-        history.append({'reported_support':job.request.get('support',{}) if job else {},'question':message.question,'answer':message.response['short_answer'],'intent':message.response.get('intent','unresolved'),
+        history.append({'reported_support':job.request.get('support',{}) if job else {},'question':message.question,'answer':message.response['short_answer'] if message.response.get('mode')=='muse_wonder_generated' else None,'intent':message.response.get('intent','unresolved'),
                         'generation_status':message.response.get('generation_status','complete'),'safety':{'urgent':message.response.get('safety',{}).get('urgent',False)}})
         cursor=turn.parent_message_id
     return list(reversed(history))

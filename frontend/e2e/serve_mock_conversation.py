@@ -32,16 +32,19 @@ def mock(name,instructions,data,schema,**kwargs):
         personal=data['intent']=='personal_assessment'
         if personal:
             text='Workload and recovery are possibilities to distinguish with the timing of your symptoms; the available record alone does not establish their cause.'
-        elif data['context']:
-            text='Signals diminish as hormones are removed from circulation or receptor activity changes, allowing the response to wind down.'
         else:
-            text='Hormones travel in the circulation and affect distant cells that have the matching receptors, which is why the response can be far from the releasing gland.'
+            text={
+                'What makes those signals stop?':'Signals diminish as hormones are removed from circulation or receptor activity changes, allowing the response to wind down.',
+                'Why do hormone signals act at a distance?':'Hormones travel in the circulation and affect distant cells that have the matching receptors, which is why the response can be far from the releasing gland.'
+            }[data['question']]
         urgent=data.get('local_safety',{}).get('urgent',False)
-        return {'blocks':[{'id':'main','text':text,'basis':'clinical_inference' if personal else 'general_model_knowledge',
-                           'citation_ids':[],'fact_ids':['user_report'] if personal else []}],
-                'short_answer_ids':['main'],'possible_explanations':[],'follow_up_questions':['How does the timing relate to workload changes?'] if personal else [],
+        blocks=[{'id':'main','text':text,'basis':'clinical_inference' if personal else 'general_model_knowledge',
+                 'citation_ids':[],'fact_ids':['user_report'] if personal else []}]
+        if personal:blocks.append({'id':'next','text':'Note when this began and whether the change occurs at rest or during activity; those differences guide the next assessment.','basis':'clinical_inference','citation_ids':[],'fact_ids':['user_report']})
+        return {'blocks':blocks,
+                'short_answer':{'explanation_id':'main','recommendation_id':'next' if personal else None},'possible_explanations':[],'follow_up_questions':['How does the timing relate to workload changes?'] if personal else [],
                 'recommendations':[],'uncertainties':['Fixture model output; not clinical validation.'],
-                'needs_medical_review':personal,'needs_urgent_attention':urgent}
+                'needs_medical_review':personal,'needs_urgent_attention':urgent and personal}
     raise RuntimeError('Unsupported fixture request')
 
 meta_model.request_structured=mock

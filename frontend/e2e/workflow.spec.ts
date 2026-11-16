@@ -190,7 +190,23 @@ test('emergency guidance precedes generation, chat continues, and conversations 
  await card.getByText('Detailed analysis',{exact:true}).click();
  await expect(card.getByRole('heading',{name:'Generated explanation'})).toBeVisible();
  await expect(card.getByRole('heading',{name:'Follow-up questions'})).toBeVisible();
+ await expect(card.locator('.short-answer-explanation')).toContainText('Possible problem:');
+ await expect(card.locator('.short-answer-recommendation')).toContainText('Recommendation:');
+ const safetyNotice=await card.locator('.emergency-overlay > div > p').innerText();
+ await expect(card.getByText(safetyNotice,{exact:true})).toHaveCount(1);
+ await expect(card.locator('.assistant-short')).not.toContainText(safetyNotice);
+ await card.getByText('Emergency support details',{exact:true}).click();
  await expect(card).toContainText('No mission-approved clinical procedure is installed');
+ // Urgency and question intent remain independent on the same parent chain.
+ await page.getByLabel('Continue this conversation',{exact:true}).fill('Why do hormone signals act at a distance?');
+ await page.getByRole('button',{name:'Ask medical assistant',exact:true}).click();
+ await expect(card).toContainText('Muse Wonder · generated');
+ await expect(page.locator('.asked-question')).toContainText('Why do hormone signals act at a distance?');
+ await expect(card.locator('.short-answer-explanation')).toContainText('Answer:');
+ await expect(card.locator('.short-answer-recommendation')).toHaveCount(0);
+ await expect(card.getByRole('heading',{name:'Independent emergency guidance'})).toBeVisible();
+ await card.getByText('Detailed analysis',{exact:true}).click();
+ await expect(card.getByRole('heading',{name:'Patient observations'})).toHaveCount(0);
  await page.getByRole('button',{name:'Mission & Earth link',exact:true}).click();
  await page.getByRole('button',{name:'Process due messages',exact:true}).click();
  await page.getByRole('button',{name:'Sign out and switch workspace'}).click();
@@ -199,6 +215,9 @@ test('emergency guidance precedes generation, chat continues, and conversations 
  const archive=page.locator('section').filter({has:page.getByRole('heading',{name:'Medical assistant history',exact:true})});
  await expect(archive.getByText('An unfamiliar serious change is happening. Can you help me understand it?',{exact:false})).toBeVisible();
  await expect(archive.getByText('It started suddenly and I am alone. What information matters?',{exact:false})).toBeVisible();
+ await page.getByLabel('Delivered finding').selectOption({label:'AI assistant review · Medical assistant warning signs'});
+ await expect(page.locator('.finding-detail').getByRole('article',{name:'Medical assistant answer'})).toBeVisible();
+ await expect(page.locator('.finding-detail > .workflow-step')).toHaveCount(0);
  expect(failures).toEqual([]);
 });
 
@@ -221,4 +240,35 @@ test('concurrent background generations, polling, and sync complete without SQLi
  const doctor=await (await request.post(`${base}/auth/login`,{data:{username:'doctor',password:'demo-orbit-2026'}})).json();
  const archive=await (await request.get(`${base}/doctors/conversations/astro-01`,{headers:{Authorization:`Bearer ${doctor.token}`}})).json();
  for(const m of messages)expect(archive.find((r:{message:{id:string}})=>r.message.id===m.id).message.generation_status).toBe('complete');
+});
+
+test('real research replay preserves clinical provenance, elapsed time, and original CSV',async({page})=>{
+ const failures:string[]=[];page.on('response',r=>{if(r.status()>=500)failures.push(`${r.status()} ${r.url()}`)});
+ await page.goto('/');await page.getByRole('button',{name:'Enter astronaut workspace'}).click();
+ await page.getByRole('button',{name:'Real Research Data Replay',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Real Research Data Replay',exact:true})).toBeVisible();
+ await expect(page.locator('.demo-label')).toContainText('REAL RESEARCH DATA');
+ await expect(page.locator('.mission-label')).toContainText('EARTH CLINICAL RECORD');
+ await expect(page.getByText('Earth-based critically ill hospital patient; not an astronaut.',{exact:false})).toBeVisible();
+ await page.getByRole('button',{name:'Replay next 30 samples',exact:true}).click();
+ await expect(page.getByRole('status').filter({hasText:'30 / 481'})).toBeVisible();
+ await expect(page.getByRole('img',{name:/Real research heart-rate chart, 30 original samples/})).toBeVisible();
+ await expect(page.getByText('Longitudinal monitoring: insufficient data',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Load full record',exact:true}).click();
+ await expect(page.getByRole('status').filter({hasText:'481 / 481'})).toContainText('Replay complete');
+ await expect(page.locator('tbody tr')).toHaveCount(20);
+ await expect(page.locator('tbody tr').first().locator('td').first()).toHaveText('480');
+ const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Download original CSV',exact:true}).click();
+ expect((await downloading).suggestedFilename()).toBe('bidmc_01_Numerics.csv');
+ await page.reload();await page.getByRole('button',{name:'Real Research Data Replay',exact:true}).click();
+ await expect(page.getByRole('status').filter({hasText:'481 / 481'})).toBeVisible();
+ await page.getByRole('button',{name:'Restart playback',exact:true}).click();
+ await expect(page.getByRole('status').filter({hasText:'0 / 481'})).toBeVisible();
+ await page.getByRole('button',{name:'Start research replay',exact:true}).click();
+ await expect(page.getByRole('status').filter({hasText:'1 / 481'})).toBeVisible();
+ await page.getByRole('button',{name:'Pause research replay',exact:true}).click();
+ await page.getByRole('button',{name:'Health overview',exact:true}).click();
+ await expect(page.locator('.demo-label')).toContainText('SYNTHETIC DATA');
+ await expect(page.getByRole('heading',{name:'Your health, in orbit.'})).toBeVisible();
+ expect(failures).toEqual([]);
 });

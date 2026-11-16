@@ -6,11 +6,14 @@ from sqlalchemy import select
 from ..models.records import Measurement, Baseline
 
 
-def analyze_metric(db, user_id, metric, origin='simulated'):
-    cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+def analyze_metric(db, user_id, metric, origin='simulated', *, as_of=None):
+    # Replay may supply an explicit archival clock; live monitoring is unchanged.
+    clock = as_of or datetime.now(timezone.utc)
+    cutoff = clock - timedelta(days=30)
     rows = list(db.scalars(select(Measurement).where(
         Measurement.user_id == user_id, Measurement.metric == metric,
-        Measurement.origin == origin, Measurement.timestamp >= cutoff.isoformat()
+        Measurement.origin == origin, Measurement.timestamp >= cutoff.isoformat(),
+        Measurement.timestamp <= clock.isoformat() if as_of is not None else True
     ).order_by(Measurement.timestamp)))
     valid = [r for r in rows if r.quality == 'valid']
     baseline = db.scalar(select(Baseline).where(Baseline.user_id == user_id, Baseline.metric == metric, Baseline.origin == origin))
@@ -24,7 +27,7 @@ def analyze_metric(db, user_id, metric, origin='simulated'):
         daily[datetime.fromisoformat(row.timestamp).date().isoformat()].append(row.value)
     days = sorted((day, mean(values)) for day, values in daily.items())
     latest_time = datetime.fromisoformat(valid[-1].timestamp)
-    if datetime.now(timezone.utc) - latest_time > timedelta(hours=48):
+    if clock - latest_time > timedelta(hours=48):
         return {**result, 'data_status': 'stale', 'reason': 'Latest valid reading is over 48 hours old.'}
     anchor = latest_time.date()
     current = [(d, v) for d, v in days if datetime.fromisoformat(d).date() > anchor - timedelta(days=7)]
