@@ -43,6 +43,8 @@ class Measurement(Base):
     source: Mapped[str]
     origin: Mapped[str]
     quality: Mapped[str]
+    # Device/source identifier (e.g. simulated watch ID). Nullable for legacy rows.
+    device_id: Mapped[str | None] = mapped_column(nullable=True, default=None)
 
 class Baseline(Base):
     __tablename__ = 'health_baselines'
@@ -144,3 +146,12 @@ class AuditEvent(Base):
     action: Mapped[str]
     detail: Mapped[dict] = mapped_column(JSON)
     timestamp: Mapped[str] = mapped_column(default=now)
+
+class SimulatorState(Base):
+    """Per-astronaut synthetic scenario state so simulated readings evolve coherently."""
+    __tablename__ = 'simulator_state'
+    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'), primary_key=True)
+    scenario: Mapped[str] = mapped_column(default='normal')
+    started_at: Mapped[str] = mapped_column(default=now)
+    step: Mapped[int] = mapped_column(default=0)
+    updated_at: Mapped[str] = mapped_column(default=now)

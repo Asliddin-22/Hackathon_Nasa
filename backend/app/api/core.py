@@ -4,10 +4,10 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 from ..config import SEED_DEMO
-from ..database.db import get_db
+from ..database.db import get_db, begin_write
 from ..models.records import User, AuthSession, Mission, AuditEvent, Protocol
 from ..services.auth import current_user, astronaut, own_record, password_matches, issue_token, bearer
-from ..services.ingestion import Reading, ingest
+from ..services.ingestion import Reading, ingest_batch_and_monitor
 from ..services.records import snapshot, serialize
 from ..services.earth_sync import queue_snapshot
 
@@ -50,12 +50,20 @@ def history(user_id: str, user=Depends(astronaut), db: Session = Depends(get_db)
 
 @router.post('/measurements', status_code=201)
 def measurement(data: Reading, user=Depends(astronaut), db: Session = Depends(get_db)):
-    own_record(user, data.user_id)
-    row, created = ingest(db, data, user.id)
-    if created:
-        queue_snapshot(db, user.id)
+    begin_write(db)
+    # The astronaut ID always comes from the authenticated session.
+    if data.user_id is not None:
+        own_record(user, data.user_id)
+    if data.origin == 'device':
+        # A browser session cannot prove a reading came from a verified device.
+        raise HTTPException(403, 'Verified device ingestion requires a registered device adapter, which is not enabled in this milestone.')
+    result = ingest_batch_and_monitor(db, [data], user.id, user.id)
     db.commit()
-    return {'measurement': serialize(row), 'created': created}
+    row = result['stored'][0]
+    return {'measurement': serialize(row), 'created': bool(result['created']),
+            'monitoring': {'assessments_run': len(result['assessments']), 'watch_alerts': result['watch_alerts'],
+                           'longitudinal_skipped_for_origins': result['longitudinal_skipped'],
+                           'sync_event_id': result['sync_event_id']}}
 
 @router.get('/mission/context')
 def context(user=Depends(current_user), db: Session = Depends(get_db)):

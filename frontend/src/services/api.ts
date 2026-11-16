@@ -1,7 +1,7 @@
 export type User = { id: string; name: string; role: 'astronaut' | 'doctor' };
-export type Measurement = { id: string; user_id: string; metric: string; value: number; unit: string; timestamp: string; source: string; origin: string; quality: string };
+export type Measurement = { id: string; user_id: string; metric: string; value: number; unit: string; timestamp: string; source: string; origin: string; quality: string; device_id?: string | null; received_at?: string };
 export type Finding = {module: string; status: string; observation: string; certainty: string; doctor_review: boolean; timestamp: string; references: string[]; statistics: {baseline?: number; current_mean?: number; change_percent?: number; unit?: string; data_status: string; window_days?: number; previous_mean?: number; excluded_count?: number; missing_days?: number}; explanation: {mode: string; evidence: string[]; guidance_status: string}; rule?: {threshold_percent: number; direction: string; authority: string}; actions: {code: string; text: string}[]};
-export type Alert = {id: string; user_id: string; module: string; title: string; severity: string; status: string; created_at: string; evidence: {assistant_response?: AssistantAnswer; description?: string; actions?: {code: string; text: string}[]}};
+export type Alert = {id: string; user_id: string; module: string; title: string; severity: string; status: string; created_at: string; evidence: {origin?:string;readings?:{id:string;value:number;unit:string;timestamp:string;device_id?:string|null;source?:string}[];assistant_response?: AssistantAnswer; description?: string; actions?: {code: string; text: string}[]}};
 export type Review = {id: string; user_id: string; alert_id: string; doctor_id: string; assessment: string; feedback: string; created_at: string; delivered_at: string | null; acknowledged_at: string | null};
 export type HealthRecord = {user: User; captured_at: string; latest: Record<string, Measurement>; baselines: {metric: string; value: number; unit: string; origin: string}[]; measurements: Measurement[]; tests: {id: string; test_type: string; results: {note: string}; timestamp: string; origin: string}[]; assessments: Finding[]; alerts: Alert[]; symptoms: {description: string; severity: number; timestamp: string; origin: string}[]; reviews: Review[]; assistant_messages?: AssistantAnswer[]};
 export type GroundRecord = {user_id: string; captured_at: string; received_at: string; snapshot: HealthRecord};
@@ -18,8 +18,8 @@ export async function request<T>(path: string, token?: string, method = 'GET', b
   }
   return response.json();
 }
-export const labels: Record<string,string> = {resting_hr:'Resting heart rate',hrv:'Heart rate variability',strength:'Muscle strength',balance_sway:'Balance sway',exercise_minutes:'Exercise duration',hydration:'Hydration',systolic_bp:'Systolic blood pressure',diastolic_bp:'Diastolic blood pressure'};
-export const modules: Record<string,string> = {cardiovascular:'Cardiovascular',muscle:'Muscle health',balance:'Balance & coordination',bone:'Bone health',kidney:'Kidney health',vision:'Vision / SANS',symptoms:'Reported symptoms',assistant:'AI assistant review'};
+export const labels: Record<string,string> = {resting_hr:'Resting heart rate',hrv:'Heart rate variability',strength:'Muscle strength',balance_sway:'Balance sway',exercise_minutes:'Exercise duration',hydration:'Hydration',systolic_bp:'Systolic blood pressure',diastolic_bp:'Diastolic blood pressure',heart_rate:'Heart rate',spo2:'Blood oxygen (SpO2)',sleep_hours:'Sleep duration',steps:'Steps'};
+export const modules: Record<string,string> = {cardiovascular:'Cardiovascular',muscle:'Muscle health',balance:'Balance & coordination',bone:'Bone health',kidney:'Kidney health',vision:'Vision / SANS',symptoms:'Reported symptoms',assistant:'AI assistant review',watch_resting_hr:'G2 · resting heart rate monitor',watch_spo2:'G2 · blood oxygen monitor'};
 export const dateTime = (s?: string | null) => s ? new Date(s).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : 'Not yet received';
 export const day = (s: string) => new Date(s).toLocaleDateString([], {month:'short',day:'numeric'});
 
@@ -38,3 +38,6 @@ export type AssistantAnswer = {
  follow_up_questions:string[];recommendations:{code:string;text:string;basis?:string;citation_ids?:string[];fact_ids?:string[]}[];uncertainties:string[];references:ReferencePassage[];ranking_note:string;
  };
 };
+
+export const units:Record<string,string>={resting_hr:'bpm',hrv:'ms',strength:'kg',balance_sway:'deg',hydration:'mL',exercise_minutes:'min',systolic_bp:'mmHg',diastolic_bp:'mmHg',heart_rate:'bpm',spo2:'%',sleep_hours:'h',steps:'count'};
+export type SimulatorState = {scenario: string; label: string; step: number; started_at: string; updated_at: string; device_id: string; provenance: string; scenarios: {id: string; label: string; summary: string}[]};

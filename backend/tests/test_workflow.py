@@ -70,5 +70,10 @@ def test_failed_message_retries(client, astronaut):
 
 
 def test_simulator_is_persisted(client, astronaut):
-    assert client.post('/api/simulator/tick', headers=astronaut, json={'scenario': 'trend'}).json()['inserted'] == 4
-    assert len(client.get('/api/astronauts/astro-01/history', headers=astronaut).json()) == 184
+    before=client.get('/api/astronauts/astro-01/history',headers=astronaut).json()
+    response=client.post('/api/simulator/tick',headers=astronaut,json={'scenario':'trend'}).json()
+    after=client.get('/api/astronauts/astro-01/history',headers=astronaut).json()
+    new=[r for r in after if r['id'] not in {r['id'] for r in before}]
+    assert len(new)==response['inserted']==5
+    assert {r['metric'] for r in new}=={'heart_rate','resting_hr','hrv','spo2','steps'}
+    assert all(r['device_id']=='g2-virtual-watch' and r['origin']=='simulated' for r in new)

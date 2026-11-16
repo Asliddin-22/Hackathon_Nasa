@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from sqlalchemy import select
 from simulator.astronaut_data import CREW, BASELINES, history
+from simulator.scenarios import WATCH_BASELINES, watch_history
 from ..config import DEMO_PASSWORD
 from ..models.records import User, Mission, Measurement, Baseline, MedicalTest, Protocol
 from .auth import password_hash
@@ -16,6 +17,7 @@ def seed(db):
             db.add(Protocol(**data))
     db.commit()
     if db.scalar(select(User).limit(1)):
+        ensure_watch_fixtures(db)
         return
     for index, (uid, name, _) in enumerate(CREW):
         db.add(User(id=uid, username='astronaut' if index == 0 else f'astronaut{index+1}', name=name,
@@ -35,4 +37,25 @@ def seed(db):
                                    ('OCT', {'note': 'Synthetic baseline exam. No current in-flight comparison.'})]:
             db.add(MedicalTest(id=f'{uid}-{test_type}', user_id=uid, test_type=test_type, results=results,
                               timestamp=(datetime.now(timezone.utc) - timedelta(days=130)).isoformat(), origin='simulated'))
+    db.commit()
+    ensure_watch_fixtures(db)
+
+
+def ensure_watch_fixtures(db):
+    """Additively provision synthetic wearable history/baselines for G2 watch metrics.
+
+    Runs on new and existing demo databases; never overwrites existing readings.
+    """
+    for index, (uid, _, _) in enumerate(CREW):
+        if not db.get(User, uid):
+            continue
+        if not db.scalar(select(Measurement.id).where(Measurement.user_id == uid, Measurement.metric == 'heart_rate').limit(1)):
+            for reading in watch_history(uid, index):
+                if not db.get(Measurement, reading['id']):
+                    db.add(Measurement(**reading))
+        for metric, (value, unit) in WATCH_BASELINES.items():
+            exists = db.scalar(select(Baseline.id).where(Baseline.user_id == uid, Baseline.metric == metric, Baseline.origin == 'simulated'))
+            if not exists:
+                db.add(Baseline(user_id=uid, metric=metric, value=value + (index * 2 if metric == 'heart_rate' else 0),
+                                unit=unit, period='Synthetic preflight reference', origin='simulated'))
     db.commit()

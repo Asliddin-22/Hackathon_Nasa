@@ -272,3 +272,101 @@ test('real research replay preserves clinical provenance, elapsed time, and orig
  await expect(page.getByRole('heading',{name:'Your health, in orbit.'})).toBeVisible();
  expect(failures).toEqual([]);
 });
+
+
+test('G2 watch: simulated scenario, watch alert, symptom report, dashboard and Earth delivery',async({page},testInfo)=>{
+ const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto('/');await page.getByRole('button',{name:'Enter astronaut workspace'}).click();
+ await expect(page.getByRole('heading',{name:'Your health, in orbit.'})).toBeVisible();
+ await page.getByRole('button',{name:'Mission & Earth link',exact:true}).click();
+ await page.getByLabel('Delay per leg (seconds)').fill('0');
+ await page.getByRole('button',{name:'Save settings',exact:true}).click();
+ await page.getByRole('button',{name:'G2 Watch',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Your vitals, on your wrist.'})).toBeVisible();
+ await expect(page.locator('.g2-sim')).toHaveText('SIMULATED');
+ await page.getByLabel('Scenario').selectOption('concerning_trend');
+ await expect(page.locator('.scenario-pill')).toContainText('Medically concerning trend');
+ for(let i=0;i<7;i++){await page.getByRole('button',{name:'Send one reading',exact:true}).click();await expect(page.getByText(`Step ${i+1} ·`)).toBeVisible()}
+ const notice=page.getByRole('alertdialog',{name:'G2 alert notification'});
+ await expect(notice).toBeVisible();
+ await notice.getByRole('button',{name:'View',exact:true}).click();
+ await expect(page.locator('.g2-alerts')).toContainText('G2: resting heart rate stayed elevated');
+ await expect(page.locator('.g2-alerts')).toContainText('G2: blood oxygen readings were low');
+ await page.locator('.g2-watch').screenshot({path:testInfo.outputPath('g2-alerts.png')});
+ await page.getByRole('button',{name:'Side button: report a symptom'}).click();
+ await page.locator('.g2-chips').getByRole('button',{name:'Dizziness'}).click();
+ await page.getByRole('button',{name:'Send report',exact:true}).click();
+ await expect(page.locator('.g2-sent')).toContainText('Report saved');
+ await page.getByRole('button',{name:'Digital crown: return to watch face'}).click();
+ await expect(page.locator('.g2-time')).toBeVisible();
+ // Watch readings feed the existing dashboard and history.
+ await page.getByRole('button',{name:'Health overview',exact:true}).click();
+ await expect(page.locator('.metric-card').first()).toContainText('simulated');
+ await page.getByRole('button',{name:'Health history',exact:true}).click();
+ await page.getByLabel('History metric').selectOption('spo2');
+ await expect(page.locator('tbody')).toContainText('G2 virtual watch simulator');
+ await expect(page.locator('tbody')).toContainText('g2-virtual-watch');
+ await page.getByRole('button',{name:'Alerts & feedback',exact:true}).click();
+ await expect(page.getByText('Reported from G2 watch: Dizziness')).toBeVisible();
+ // Earth receives the watch alert only once the queue is processed.
+ await page.getByRole('button',{name:'Mission & Earth link',exact:true}).click();
+ await page.getByRole('button',{name:'Process due messages',exact:true}).click();
+ await page.getByRole('button',{name:'Sign out and switch workspace'}).click();
+ await page.getByRole('button',{name:'Flight surgeon Ground review & medical feedback'}).click();
+ await page.getByRole('button',{name:'Enter doctor workspace'}).click();
+ await expect(page.getByLabel('Delivered finding').locator('option').filter({hasText:'G2: resting heart rate stayed elevated'})).toHaveCount(1);
+ await page.getByLabel('Delivered finding').selectOption({label:'G2 · resting heart rate monitor · G2: resting heart rate stayed elevated'});
+ await expect(page.getByRole('heading',{name:'Recorded sensor evidence',exact:true})).toBeVisible();
+ await expect(page.locator('.finding-detail tbody')).toContainText('g2-virtual-watch');
+ await page.getByRole('button',{name:'Sign out and switch workspace'}).click();
+ await page.getByRole('button',{name:'Enter astronaut workspace'}).click();
+ await page.setViewportSize({width:390,height:844});
+ await page.getByRole('button',{name:'Open navigation',exact:true}).click();
+ await page.getByRole('button',{name:'G2 Watch',exact:true}).click();
+ await expect(page.locator('.g2-screen')).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
+ await page.screenshot({path:testInfo.outputPath('g2-mobile.png'),fullPage:true});
+ expect(errors).toEqual([]);
+});
+
+
+test('G2 watch data and the final current-schema AI answer reach the doctor after reconnection and delay',async({page})=>{
+ const failures:string[]=[];page.on('response',r=>{if(r.status()>=500)failures.push(`${r.status()} ${r.url()}`)});
+ await page.goto('http://127.0.0.1:8003/');await page.getByRole('button',{name:'Enter astronaut workspace',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Your health, in orbit.',exact:true})).toBeVisible();
+ const token=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('gravityguard-session')!).token);
+ const headers={Authorization:`Bearer ${token}`};const api='http://127.0.0.1:8003/api';
+ expect((await page.request.patch(`${api}/mission/context`,{headers,data:{online:false,delay_seconds:2}})).status()).toBe(200);
+ await page.getByRole('button',{name:'G2 Watch',exact:true}).click();
+ await page.getByLabel('Scenario',{exact:true}).selectOption('concerning_trend');
+ for(let i=0;i<7;i++){await page.getByRole('button',{name:'Send one reading',exact:true}).click();await expect(page.getByText(`Step ${i+1} ·`)).toBeVisible()}
+ const record=await (await page.request.get(`${api}/astronauts/astro-01/health`,{headers})).json();
+ const watchNotice=page.getByRole('alertdialog',{name:'G2 alert notification'});if(await watchNotice.isVisible())await watchNotice.getByRole('button',{name:'Dismiss',exact:true}).click();
+ await page.locator('.g2-screen-list').getByRole('button',{name:'Medical assistant',exact:true}).click();
+ await page.getByRole('button',{name:'Open assistant',exact:true}).click();
+ await page.getByRole('button',{name:'New conversation',exact:true}).click();
+ const question='How should I interpret my latest G2 watch heart rate and oxygen readings?';
+ await page.getByLabel('Your medical question',{exact:true}).fill(question);
+ const posted=page.waitForResponse(r=>r.url().endsWith('/api/assistant/messages')&&r.request().method()==='POST');
+ await page.getByRole('button',{name:'Ask medical assistant',exact:true}).click();const initial=await (await posted).json();
+ const card=page.getByRole('article',{name:'Medical assistant answer'});await expect(card).toContainText('Muse Wonder · generated');
+ await expect(card.locator('.short-answer-explanation')).toContainText(String(record.latest.heart_rate.value));
+ await expect(card.locator('.short-answer-explanation')).toContainText(String(record.latest.spo2.value));
+ await expect(card.locator('.short-answer-recommendation')).toBeVisible();
+ const final=await (await page.request.get(`${api}/assistant/messages/${initial.id}`,{headers})).json();
+ expect(final.schema_version).toBe('3');expect(final.generation_status).toBe('complete');
+ expect(final.detailed.patient_observations.map((o:{metric:string})=>o.metric).sort()).toEqual(['heart_rate','sleep_hours','spo2']);
+ const doc=await (await page.request.post(`${api}/auth/login`,{data:{username:'doctor',password:'demo-orbit-2026'}})).json();const doctorHeaders={Authorization:`Bearer ${doc.token}`};
+ const archive=async()=>await (await page.request.get(`${api}/doctors/conversations/astro-01`,{headers:doctorHeaders})).json();
+ expect((await archive()).some((r:{message:{id:string}})=>r.message.id===initial.id)).toBe(false);
+ expect((await (await page.request.post(`${api}/sync`,{headers})).json()).status).toBe('offline');
+ expect((await page.request.patch(`${api}/mission/context`,{headers,data:{online:true}})).status()).toBe(200);
+ await expect.poll(async()=>{await page.request.post(`${api}/sync`,{headers});return (await archive()).find((r:{message:{id:string}})=>r.message.id===initial.id)?.message.generation_status},{timeout:10000}).toBe('complete');
+ expect((await archive()).find((r:{message:{id:string}})=>r.message.id===initial.id).message).toEqual(final);
+ await page.getByRole('button',{name:'Sign out and switch workspace'}).click();await page.getByRole('button',{name:'Flight surgeon Ground review & medical feedback'}).click();await page.getByRole('button',{name:'Enter doctor workspace'}).click();
+ const history=page.locator('section').filter({has:page.getByRole('heading',{name:'Medical assistant history',exact:true})});
+ const turn=history.locator(':scope > details').filter({hasText:question});await turn.locator(':scope > summary').click();
+ await expect(turn).toContainText('Muse Wonder · generated');await turn.getByText('Detailed analysis',{exact:true}).click();
+ await expect(turn.getByRole('heading',{name:'Patient observations'})).toBeVisible();await expect(turn).toContainText('Blood oxygen (SpO2)');
+ expect(failures).toEqual([]);
+});

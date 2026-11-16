@@ -58,6 +58,14 @@ This script adds a synthetic symptom/review, verifies each delivery boundary, si
 - Connected astronaut and doctor interfaces, history filters, manual ingestion, CSV export, evidence details, mission controls, simulator controls, and responsive navigation.
 - A built dashboard served directly from FastAPI, including local font assets.
 
+## G2 Watch integration
+
+The **G2 Watch** page reuses the supplied virtual-watch implementation: six coherent scenarios, heart rate/resting heart rate, HRV, SpO2, sleep, steps, sensor freshness, notifications, and symptom reporting. **All G2 readings are simulated; no physical watch is connected.** The selected feed is shared with the dashboard/history, current medical assistant, and delayed Earth doctor records. Source/device/provenance are retained. Watch alerts and generic measurement uploads now use the shared ingestion-and-monitoring path.
+
+Restart the backend for the additive device-ID column and simulator-state table; existing records and conversations are retained. Choose **G2 Watch**, select a scenario, and send individual readings or start the feed. The concerning scenario produces experimental review notifications after about seven readings. Doctor views expose the delivered sensor evidence and complete AI conversations after the configured delay.
+
+Work is on `feature/g2-watch`; main was not merged or pushed. [Exact ZIP comparison, retained components, migration, and verification](docs/g2-integration.md). [Watch controls and scenarios](docs/smartwatch.md).
+
 ## Real Research Data Replay
 
 Sign in as Astronaut and choose **Real Research Data Replay** in the sidebar. It replays **481 real heart-rate readings across eight minutes** from [PhysioNet BIDMC record 01](https://physionet.org/content/bidmc/1.0.0/), with original bpm values and elapsed seconds preserved. Use one-sample-per-second playback, advance 30 samples, or load the full record; restart playback without duplicating stored measurements. The chart, downloadable original CSV, citations, license, and checksum are available offline.
@@ -104,7 +112,7 @@ PLAYWRIGHT_BROWSER=chromium npm run test:e2e
 
 Browser tests start isolated API/Vite servers on ports 8002/8003/5174 with a new temporary SQLite database per run. Build first: one test exercises FastAPI's built dashboard directly. Tests do not reset or modify the normal demo database. API tests use isolated in-memory or temporary databases. Browser screenshots/traces on failure live under ignored `frontend/test-results/`; successful test screenshots are also kept in that directory.
 
-Verified in this implementation: **163 backend tests, 8 Chrome browser workflows, and the production TypeScript/Vite build**. Model calls are mocked for development; tests establish integration behavior, not medical accuracy. See [verification details](docs/verification.md).
+Verified in this implementation: **185 backend tests, 10 Chrome browser workflows, and the production TypeScript/Vite build**. Model calls are mocked for development; tests establish integration behavior, not medical accuracy. See [verification details](docs/verification.md).
 
 ## Legacy trend-explanation connection check
 

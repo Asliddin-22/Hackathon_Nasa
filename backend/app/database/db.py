@@ -36,3 +36,20 @@ def begin_write(db):
     db.commit()  # Authentication may have opened a read-only session transaction.
     if db.get_bind().dialect.name=='sqlite':
         db.connection().exec_driver_sql('BEGIN IMMEDIATE')
+
+
+# Additive columns for databases created before a column existed. create_all()
+# adds tables but never alters existing ones; this keeps old demo databases usable.
+ADDITIVE_COLUMNS = {'health_measurements': {'device_id': 'VARCHAR'}}
+
+def ensure_additive_columns(bind):
+    if bind.dialect.name != 'sqlite':
+        return
+    with bind.begin() as connection:
+        for table, columns in ADDITIVE_COLUMNS.items():
+            existing = {row[1] for row in connection.exec_driver_sql(f'PRAGMA table_info({table})')}
+            if not existing:
+                continue
+            for column, kind in columns.items():
+                if column not in existing:
+                    connection.exec_driver_sql(f'ALTER TABLE {table} ADD COLUMN {column} {kind}')

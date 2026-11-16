@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from .database.db import Base, engine, SessionLocal
+from .database.db import Base, engine, SessionLocal, ensure_additive_columns
 from .models import records  # register tables
 from .models import knowledge
 from .models import research
@@ -11,6 +11,7 @@ from .api.core import router as core_router
 @asynccontextmanager
 async def lifespan(app):
     Base.metadata.create_all(engine)
+    ensure_additive_columns(engine)
     if SEED_DEMO:
         with SessionLocal() as db:
             seed(db)
