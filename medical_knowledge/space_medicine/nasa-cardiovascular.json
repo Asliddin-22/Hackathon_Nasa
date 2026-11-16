@@ -1,0 +1,26 @@
+{
+  "id": "nasa-cardiovascular",
+  "title": "Cardiovascular and Vision — Cardiovascular Concerns",
+  "url": "https://www.nasa.gov/directorates/esdmd/hhp/cardiovascular-and-vision/",
+  "publisher": "NASA",
+  "system": "cardiovascular",
+  "category": "space_medicine",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected NASA-authored research-context passages, not a clinical protocol or NASA endorsement. Images and interventions excluded.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: NASA.",
+    "exclusions": "Third-party media, images, logos and treatment sections excluded."
+  },
+  "sections": [
+    {
+      "heading": "The Heart of the Matter: Cardiovascular Concerns",
+      "text": "When astronauts first launch into space, many describe a sensation of fullness in their face and head. In weightlessness, gravity no longer pulls blood and other fluid downward to the lower body and fluids shift up towards the head; this is known as a headward fluid shift. The body senses this relative increase of fluid in the upper body and the physiological response is to reduce total blood volume."
+    }
+  ],
+  "text_sha256": "3e5dc3bf6dbd30ed70065b13d4b45361a601ae0e517cc05ec15a045b43a2f1bf"
+}

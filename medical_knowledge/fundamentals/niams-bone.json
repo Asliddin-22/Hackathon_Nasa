@@ -1,0 +1,30 @@
+{
+  "id": "niams-bone",
+  "title": "What Is Bone?",
+  "url": "https://www.niams.nih.gov/health-topics/what-bone",
+  "publisher": "NIAMS / NIH",
+  "system": "bone",
+  "category": "fundamentals",
+  "source_updated": "2023-05",
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected verbatim text passages; whitespace normalized. Not a complete page, clinical protocol, or endorsement.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.niams.nih.gov/disclaimer",
+    "reviewed_on": "2026-11-15",
+    "exclusions": "Images, videos, third-party media, logos, navigation and linked external content excluded.",
+    "attribution": "Source: NIAMS / NIH; National Institutes of Health."
+  },
+  "sections": [
+    {
+      "heading": "What is bone made of?",
+      "text": "Bone is made of protein, collagen, and minerals, especially calcium. Collagen provides a framework for the incorporation of mineral, mainly calcium phosphate into the collagen framework. The mineral makes bone hard and strong while the collagen provides flexibility so that the bone can resist breaking."
+    },
+    {
+      "heading": "What is bone remodeling?",
+      "text": "Bone is made up of living tissue that is constantly changing, a process known as remodeling (see box for a description of this process)."
+    }
+  ],
+  "text_sha256": "b15f6ec55f9a33f30321f8b8ecb29249481c7d3cb972b632b144557027953852"
+}

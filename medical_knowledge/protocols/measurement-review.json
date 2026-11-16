@@ -1,0 +1,6 @@
+{
+  "id":"demo-measurement-review", "title":"Measurement review workflow", "version":"0.1.0",
+  "approval_status":"demo_only_not_clinically_approved",
+  "steps":["Record the measurement source, time, quality, and associated symptoms.","Request review by the crew medical officer and use the mission's actual approved procedures.","Do not interpret this experimental flag as a diagnosis."],
+  "references":["nasa-body","nasa-cds"]
+}

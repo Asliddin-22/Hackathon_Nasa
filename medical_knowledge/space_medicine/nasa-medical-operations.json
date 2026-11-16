@@ -1,0 +1,30 @@
+{
+  "id": "nasa-medical-operations",
+  "title": "NASA-STD-3001 — Medical Operations",
+  "url": "https://www.nasa.gov/reference/6-0-medical-operations/",
+  "publisher": "NASA",
+  "system": "emergency_support",
+  "category": "space_medicine",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected public informational text; not a mission-approved treatment protocol.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: NASA.",
+    "exclusions": "Linked articles, third-party media, procedures and treatment sections excluded."
+  },
+  "sections": [
+    {
+      "heading": "Space medicine operations",
+      "text": "The term “space medicine operations” refers to the activities of clinicians, health care professionals, scientists, and engineers who support crewmember health and performance during their training and spaceflight. Examples of such activities include preparing for medical emergencies, monitoring the use of biomedical hardware, and providing longitudinal clinical care."
+    },
+    {
+      "heading": "Communication delay",
+      "text": "Real time communications are preferred for all private medical communications, however when missions have communication delays, different modalities can be considered (e.g., stored/forward communications)."
+    }
+  ],
+  "text_sha256": "a69f624680e5be329e5fb344107c72d615f64ea4290134e1662d23f7b31a7b91"
+}

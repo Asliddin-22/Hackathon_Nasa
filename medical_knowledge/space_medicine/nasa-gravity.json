@@ -1,0 +1,34 @@
+{
+  "id": "nasa-gravity",
+  "title": "The Human Body in Space — Gravity Fields",
+  "url": "https://www.nasa.gov/humans-in-space/the-human-body-in-space/",
+  "publisher": "NASA",
+  "system": "multisystem",
+  "category": "space_medicine",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected NASA-authored research-context passages, not a clinical protocol or NASA endorsement. Images and interventions excluded.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: NASA.",
+    "exclusions": "Third-party media, images, logos and treatment sections excluded."
+  },
+  "sections": [
+    {
+      "heading": "Gravity transitions",
+      "text": "Transitioning from one gravity field to another is trickier than it sounds. It affects spatial orientation, head-eye and hand-eye coordination, balance, and locomotion, with some crew members experiencing space motion sickness."
+    },
+    {
+      "heading": "Bone and muscle",
+      "text": "NASA has learned that without Earth’s gravity affecting the human body, weight-bearing bones lose on average 1% to 1.5% of mineral density per month during spaceflight. After returning to Earth, bone loss might not be completely corrected by rehabilitation; however, their risk for fracture is not higher. Without the proper diet and exercise routine, astronauts also lose muscle mass in microgravity faster than they would on Earth."
+    },
+    {
+      "heading": "Fluid shifts and kidney risks",
+      "text": "Moreover, the fluids in the body shift upward to the head in microgravity, which may put pressure on the eyes and cause vision problems. If preventive or countermeasures are not implemented, crews may experience an increased risk of developing kidney stones due to dehydration and increased excretion of calcium from their bones."
+    }
+  ],
+  "text_sha256": "ca968916fad8519ee0abae8641e1df3abf7a0960468b2cfef9c5091b1cbe08de"
+}

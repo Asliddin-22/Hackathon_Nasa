@@ -1,0 +1,30 @@
+{
+  "id": "medlineplus-first-aid",
+  "title": "First Aid — Summary",
+  "url": "https://medlineplus.gov/firstaid.html",
+  "publisher": "MedlinePlus, National Library of Medicine",
+  "system": "emergency_support",
+  "category": "fundamentals",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected public informational text; not a mission-approved treatment protocol.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://medlineplus.gov/about/using/usingcontent/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: MedlinePlus, National Library of Medicine.",
+    "exclusions": "Linked articles, third-party media, procedures and treatment sections excluded."
+  },
+  "sections": [
+    {
+      "heading": "First aid and urgent help",
+      "text": "First aid is the care you give right away for an injury or sudden illness before medical help arrives. Knowing basic first aid, and when to call 911, can help you stay calm and act quickly. Call 911 right away for life-threatening emergencies, such as when someone collapses, can't breathe, or is unresponsive."
+    },
+    {
+      "heading": "Training",
+      "text": "Consider taking a CPR or first aid class to build hands-on skills you can use in an emergency."
+    }
+  ],
+  "text_sha256": "3382784bebac55d5be07ba25eea3fdbf577310e8a75ce0fa1189883880c1a9a5"
+}

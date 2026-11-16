@@ -1,0 +1,26 @@
+{
+  "id": "nasa-urinary",
+  "title": "OCHMO-MTB-003 Urinary Health",
+  "url": "https://www.nasa.gov/ochmo-mtb-003-urinary-health-2/",
+  "publisher": "NASA",
+  "system": "kidney",
+  "category": "space_medicine",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected NASA-authored research-context passages, not a clinical protocol or NASA endorsement. Images and interventions excluded.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: NASA.",
+    "exclusions": "Third-party media, images, logos and treatment sections excluded."
+  },
+  "sections": [
+    {
+      "heading": "Spaceflight urinary risks",
+      "text": "Alterations in hydration state (relative dehydration), spaceflight-induced changes in urine biochemistry (urine supersaturation), microgravity-induced alterations in fluid dynamics and position of abdominal structures, and changes in bone metabolism (increased calcium excretion) during exposure to microgravity may all contribute to the increased risk of urinary health issues."
+    }
+  ],
+  "text_sha256": "487dc07fa73c1f7a806bd19197a30dbf819574f61074c2f2f2b1dcf98a8003c0"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "medlineplus-dizziness",
+  "title": "Dizziness and Vertigo — Summary",
+  "url": "https://medlineplus.gov/dizzinessandvertigo.html",
+  "publisher": "MedlinePlus / NLM / NIH",
+  "system": "balance",
+  "category": "fundamentals",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected public-domain Summary passages; whitespace and list punctuation normalized. Not a complete page, clinical protocol, or endorsement.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://medlineplus.gov/about/using/usingcontent/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: MedlinePlus, National Library of Medicine.",
+    "exclusions": "Only the public-domain topic Summary; ADAM, linked pages, images, drugs and treatment text excluded."
+  },
+  "sections": [
+    {
+      "heading": "What is dizziness and vertigo?",
+      "text": "Dizziness and vertigo are not the same thing, but they are often mixed up. Dizziness can make you feel lightheaded, woozy or unsteady on your feet. Vertigo is the feeling that you or the room is spinning even when nothing is moving."
+    },
+    {
+      "heading": "Common causes",
+      "text": "Common causes of dizziness and vertigo may include: A sudden drop in blood pressure. Dehydration. Getting up too quickly. Certain medicines. Inner ear problems, such as Meniere's disease, or benign paroxysmal positional vertigo (BPPV), the most common cause of vertigo. Motion sickness. Migraines. A head injury or ear surgery."
+    },
+    {
+      "heading": "Emergency warning signs",
+      "text": "Get emergency help right away if you have sudden or severe dizziness or vertigo along with vision problems, slurred speech or weakness. These may be signs of a more serious condition."
+    }
+  ],
+  "text_sha256": "18514e08168175592fd5c2036ea25b59a417aa6ceea88810760cd9827c02eff6"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "nei-eyes",
+  "title": "How the Eyes Work",
+  "url": "https://www.nei.nih.gov/eye-health-information/healthy-vision/how-eyes-work",
+  "publisher": "NEI / NIH",
+  "system": "vision",
+  "category": "fundamentals",
+  "source_updated": "2022-04-20",
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected verbatim text passages; whitespace normalized. Not a complete page, clinical protocol, or endorsement.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nei.nih.gov/web-policies/copyright-policy",
+    "reviewed_on": "2026-11-15",
+    "exclusions": "Images, videos, third-party media, logos, navigation and linked external content excluded.",
+    "attribution": "Courtesy: National Eye Institute, National Institutes of Health (NEI/NIH)."
+  },
+  "sections": [
+    {
+      "heading": "Light and focusing",
+      "text": "First, light passes through the cornea (the clear front layer of the eye). The cornea is shaped like a dome and bends light to help the eye focus. Some of this light enters the eye through an opening called the pupil (PYOO-pul). The iris (the colored part of the eye) controls how much light the pupil lets in. Next, light passes through the lens (a clear inner part of the eye). The lens works together with the cornea to focus light correctly on the retina."
+    },
+    {
+      "heading": "Retina and optic nerve",
+      "text": "When light hits the retina (a light-sensitive layer of tissue at the back of the eye), special cells called photoreceptors turn the light into electrical signals. These electrical signals travel from the retina through the optic nerve to the brain. Then the brain turns the signals into the images you see."
+    }
+  ],
+  "text_sha256": "d82f735f4b4cd255d7b76d999e343a1abc14b4f0339e5b198d599b2789832dab"
+}

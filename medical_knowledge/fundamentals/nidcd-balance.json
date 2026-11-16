@@ -1,0 +1,30 @@
+{
+  "id": "nidcd-balance",
+  "title": "Balance Disorders",
+  "url": "https://www.nidcd.nih.gov/health/balance-disorders",
+  "publisher": "NIDCD / NIH",
+  "system": "balance",
+  "category": "fundamentals",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected verbatim text passages; whitespace normalized. Not a complete page, clinical protocol, or endorsement.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nidcd.nih.gov/policies",
+    "reviewed_on": "2026-11-15",
+    "exclusions": "Images, videos, third-party media, logos, navigation and linked external content excluded.",
+    "attribution": "Source: NIDCD / NIH; National Institutes of Health."
+  },
+  "sections": [
+    {
+      "heading": "What causes balance disorders?",
+      "text": "Causes of balance problems include medications, ear infection, a head injury, or anything else that affects the inner ear or brain. Low blood pressure can lead to dizziness when you stand up too quickly. Problems that affect the skeletal or visual systems, such as arthritis or eye muscle imbalance, can also cause balance disorders. Your risk of having balance problems increases as you get older."
+    },
+    {
+      "heading": "How does my body keep its balance?",
+      "text": "Your sense of balance relies on a series of signals to your brain from several organs and structures in your body, specifically your eyes, ears, and the muscles and touch sensors in your legs. The part of the ear that assists in balance is known as the vestibular system, or the labyrinth, a maze-like structure in your inner ear made of bone and soft tissue."
+    }
+  ],
+  "text_sha256": "0db2d747f6beab749f3e285fbb05f98c3cb302cfcaaf676aed5f5f8f82982817"
+}

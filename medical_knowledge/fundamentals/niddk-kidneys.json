@@ -1,0 +1,30 @@
+{
+  "id": "niddk-kidneys",
+  "title": "Your Kidneys & How They Work",
+  "url": "https://www.niddk.nih.gov/health-information/kidney-disease/kidneys-how-they-work",
+  "publisher": "NIDDK / NIH",
+  "system": "kidney",
+  "category": "fundamentals",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected verbatim text passages; whitespace normalized. Not a complete page, clinical protocol, or endorsement.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.niddk.nih.gov/copyright",
+    "reviewed_on": "2026-11-15",
+    "exclusions": "Images, videos, third-party media, logos, navigation and linked external content excluded.",
+    "attribution": "Source: NIDDK / NIH; National Institutes of Health."
+  },
+  "sections": [
+    {
+      "heading": "Why are the kidneys important?",
+      "text": "Your kidneys remove wastes and extra fluid from your body. Your kidneys also remove acid that is produced by the cells of your body and maintain a healthy balance of water, salts, and minerals—such as sodium, calcium, phosphorus, and potassium—in your blood. Without this balance, nerves, muscles, and other tissues in your body may not work normally."
+    },
+    {
+      "heading": "How do my kidneys work?",
+      "text": "Each of your kidneys is made up of about a million filtering units called nephrons. Each nephron includes a filter, called the glomerulus, and a tubule. The nephrons work through a two-step process: the glomerulus filters your blood, and the tubule returns needed substances to your blood and removes wastes."
+    }
+  ],
+  "text_sha256": "7c4fd524a8f9d8688172ffced828e9056f661a2cfefdaa9a653a8c17ef89307d"
+}

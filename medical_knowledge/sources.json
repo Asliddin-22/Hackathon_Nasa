@@ -1,0 +1,4 @@
+[
+  {"id":"nasa-body","title":"The Human Body in Space","publisher":"NASA","url":"https://www.nasa.gov/humans-in-space/the-human-body-in-space/","scope":"Background on altered-gravity health effects; not a source for demo alert thresholds.","accessed":"2026-11-15","version":"1"},
+  {"id":"nasa-cds","title":"Clinical Decision Support System Concept of Operations","publisher":"NASA / NTRS","url":"https://ntrs.nasa.gov/api/citations/20220017856/downloads/HRP-48033_ExMC_CDSS_ConOps.pdf","scope":"Architecture context for Earth-independent medical decision support; not clinical approval of this prototype.","accessed":"2026-11-15","version":"1"}
+]

@@ -1,0 +1,26 @@
+{
+  "id": "nasa-sans",
+  "title": "Risk of Spaceflight Associated Neuro-ocular Syndrome (SANS)",
+  "url": "https://www.nasa.gov/reference/risk-of-spaceflight-associated-neuro-ocular-syndrome-sans/",
+  "publisher": "NASA",
+  "system": "vision",
+  "category": "space_medicine",
+  "source_updated": null,
+  "reviewed_on": "2026-11-15",
+  "version": "1",
+  "scope": "Selected NASA-authored research-context passages, not a clinical protocol or NASA endorsement. Images and interventions excluded.",
+  "rights": {
+    "status": "reviewed_public_domain_text",
+    "policy_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "reviewed_on": "2026-11-15",
+    "attribution": "Source: NASA.",
+    "exclusions": "Third-party media, images, logos and treatment sections excluded."
+  },
+  "sections": [
+    {
+      "heading": "What are the top risks?",
+      "text": "Chronic weightlessness can cause bodily fluids such as blood and cerebrospinal fluid to move toward the head, which can lead to optic nerve swelling, folds in the retina, flattening of the back of the eye, and swelling in the brain. This collection of eye and brain changes is called “spaceflight associated neuro-ocular syndrome,” or SANS. Some astronauts only experience mild changes in space, while others have clinically significant outcomes. The long-term health outcome from these changes is unknown but actively being investigated. The risk of developing SANS is higher during longer-duration missions and remains a top research priority for scientists ahead of a Mars mission."
+    }
+  ],
+  "text_sha256": "cc9a863c3431d14dc4455dbdf1485d5f1cf8e26dda3aaac0945af8c7da4aa6a4"
+}
